@@ -1,0 +1,40 @@
+name: Deploy Next.js to Azure App Service
+
+on:
+  push:
+    branches:
+      - main # 或者你自己指定的分支
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout code from GitHub repository
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Set up Node.js
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+
+
+        
+        with:
+          node-version: "20" # 选择适合你应用的 Node.js 版本
+
+      # Install dependencies
+      - name: Install dependencies
+        run: npm install
+
+      # Build Next.js app
+      - name: Build Next.js app
+        run: npm run build # 仅运行 build，而不是 export
+
+      # Deploy to Azure App Service
+      - name: Deploy to Azure App Service
+        uses: Azure/webapps-deploy@v2
+        with:
+          app-name: nextjs-dev # 替换为你的 Azure 应用服务名称
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }} # 使用 Azure publish profile 密钥
+          package: . # 指向项目根目录，包含 .next 和其他必要文件
